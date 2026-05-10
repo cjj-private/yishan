@@ -1,77 +1,97 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh">
 <head>
     <meta charset="UTF-8">
-    <title>🌟 Yishan 的星际接宝游戏</title>
+    <title>🎸 K-Pop 公主恶魔猎手：闪耀变身</title>
     <style>
-        body { margin: 0; overflow: hidden; background: #000; font-family: Arial; }
-        canvas { display: block; background: linear-gradient(to bottom, #000428, #004e92); }
-        #ui { position: absolute; top: 20px; left: 20px; color: white; font-size: 24px; pointer-events: none; }
+        body { margin: 0; background: #1a1a2e; font-family: 'Segoe UI', sans-serif; color: white; display: flex; flex-direction: column; align-items: center; min-height: 100vh; overflow-x: hidden; }
+        
+        /* 舞台区域 */
+        #stage { width: 350px; height: 500px; background: linear-gradient(180deg, #16213e 0%, #0f3460 100%); border: 5px solid #e94560; border-radius: 20px; position: relative; margin: 20px; box-shadow: 0 0 30px #e94560; overflow: hidden; }
+        
+        /* 角色图层 */
+        .layer { position: absolute; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; font-size: 150px; transition: all 0.5s ease; }
+        #aura { font-size: 250px; opacity: 0.3; } /* 战气/光效 */
+        #weapon { font-size: 80px; transform: translate(60px, 30px); } /* 武器 */
+
+        /* 控制面板 */
+        #closet { background: rgba(255, 255, 255, 0.1); padding: 20px; border-radius: 20px; width: 90%; max-width: 600px; display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .category { background: rgba(0, 0, 0, 0.3); padding: 10px; border-radius: 10px; }
+        h3 { margin-top: 0; font-size: 14px; color: #00d2ff; }
+        
+        button { background: #e94560; color: white; border: none; padding: 10px; border-radius: 5px; cursor: pointer; margin: 2px; font-size: 12px; transition: 0.2s; }
+        button:hover { background: #00d2ff; transform: scale(1.1); }
+        
+        .magic-btn { grid-column: span 2; background: linear-gradient(90deg, #ff00cc, #3333ff); font-weight: bold; font-size: 16px; padding: 15px; }
     </style>
 </head>
 <body>
-    <div id="ui">得分: <span id="score">0</span></div>
-    <canvas id="gameCanvas"></canvas>
+
+    <h1>🌟 K-Pop Demon Hunter 👑</h1>
+    <p>为你的公主选择恶魔猎手套装，准备出道打怪！</p>
+
+    <div id="stage">
+        <div id="aura" class="layer">✨</div>
+        <div id="body" class="layer">👸</div>
+        <div id="outfit" class="layer">👗</div>
+        <div id="weapon" class="layer">🎤</div>
+    </div>
+
+    <div id="closet">
+        <div class="category">
+            <h3>🎭 选择身份 (Face)</h3>
+            <button onclick="change('body', '👸')">标准公主</button>
+            <button onclick="change('body', '👧')">练习生</button>
+            <button onclick="change('body', '🦊')">九尾狐猎手</button>
+        </div>
+        
+        <div class="category">
+            <h3>👗 猎手套装 (Outfit)</h3>
+            <button onclick="change('outfit', '🥋')">功夫K-pop</button>
+            <button onclick="change('outfit', '🧥')">特工风衣</button>
+            <button onclick="change('outfit', '🧚‍♀️')">战斗仙女</button>
+        </div>
+
+        <div class="category">
+            <h3>🗡️ 猎魔武器 (Weapon)</h3>
+            <button onclick="change('weapon', '🎤')">音波麦克风</button>
+            <button onclick="change('weapon', '🎸')">电吉他巨剑</button>
+            <button onclick="change('weapon', '🏹')">极光长弓</button>
+        </div>
+
+        <div class="category">
+            <h3>🔥 觉醒光效 (Aura)</h3>
+            <button onclick="change('aura', '🔥')">地狱火</button>
+            <button onclick="change('aura', '⚡')">雷霆</button>
+            <button onclick="change('aura', '🌸')">樱花阵</button>
+        </div>
+
+        <button class="magic-btn" onclick="randomStyle()">⚡ 随机一键变身！</button>
+    </div>
 
     <script>
-        const canvas = document.getElementById('gameCanvas');
-        const ctx = canvas.getContext('2d');
-        const scoreElement = document.getElementById('score');
-
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-
-        let score = 0;
-        let basket = { x: canvas.width / 2, y: canvas.height - 70, width: 80, height: 20 };
-        let stars = [];
-
-        // 监听鼠标或手指移动
-        window.addEventListener('mousemove', (e) => { basket.x = e.clientX - basket.width / 2; });
-        window.addEventListener('touchmove', (e) => { 
-            basket.x = e.touches[0].clientX - basket.width / 2; 
-            e.preventDefault();
-        }, {passive: false});
-
-        function createStar() {
-            stars.push({
-                x: Math.random() * canvas.width,
-                y: 0,
-                size: Math.random() * 5 + 5,
-                speed: Math.random() * 3 + 2
-            });
+        // 核心功能：改变部件
+        function change(id, emoji) {
+            const element = document.getElementById(id);
+            element.style.transform = "scale(0)"; // 变身动画开始
+            setTimeout(() => {
+                element.innerText = emoji;
+                element.style.transform = "scale(1)"; // 变身动画结束
+            }, 200);
         }
 
-        function update() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        // 随机变身逻辑
+        function randomStyle() {
+            const bodies = ['👸', '👧', '🦊', '👩‍🎤'];
+            const outfits = ['🥋', '🧥', '🧚‍♀️', '👗', '🧥'];
+            const weapons = ['🎤', '🎸', '🏹', '⚔️', '🪄'];
+            const auras = ['🔥', '⚡', '🌸', '❄️', '🌈'];
 
-            // 画篮子
-            ctx.fillStyle = '#ffde59';
-            ctx.fillRect(basket.x, basket.y, basket.width, basket.height);
-
-            // 画星星
-            for (let i = 0; i < stars.length; i++) {
-                let s = stars[i];
-                s.y += s.speed;
-
-                // 修改后的代码：画一只小兔子
-                ctx.font = s.size * 3 + "px Arial"; 
-                ctx.fillText("🐰", s.x, s.y);
-
-                // 碰撞检测
-                if (s.y + s.size > basket.y && s.x > basket.x && s.x < basket.x + basket.width) {
-                    stars.splice(i, 1);
-                    score += 10;
-                    scoreElement.innerText = score;
-                } else if (s.y > canvas.height) {
-                    stars.splice(i, 1);
-                }
-            }
-
-            if (Math.random() < 0.05) createStar();
-            requestAnimationFrame(update);
+            change('body', bodies[Math.floor(Math.random()*bodies.length)]);
+            change('outfit', outfits[Math.floor(Math.random()*outfits.length)]);
+            change('weapon', weapons[Math.floor(Math.random()*weapons.length)]);
+            change('aura', auras[Math.floor(Math.random()*auras.length)]);
         }
-
-        update();
     </script>
 </body>
 </html>
