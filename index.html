@@ -2,15 +2,15 @@
 <html lang="zh">
 <head>
     <meta charset="UTF-8">
-    <title>🌸 一闪的专属：超萌樱花校园</title>
+    <title>🌸 一闪的樱花舞台：生动拼装版</title>
     <style>
-        body { margin: 0; background: #fff0f6; font-family: 'Arial', sans-serif; display: flex; flex-direction: column; align-items: center; overflow-x: hidden; }
+        body { margin: 0; background: #fff0f6; font-family: 'Arial', sans-serif; display: flex; flex-direction: column; align-items: center; overflow: hidden; }
         
         h1 { color: #d63384; margin-top: 10px; font-size: 24px; text-shadow: 1px 1px 2px rgba(255,133,161,0.5); }
 
         /* 校园舞台 */
         #campus-scene { 
-            width: 95%; max-width: 600px; height: 520px; 
+            width: 95%; max-width: 600px; height: 500px; 
             background: linear-gradient(180deg, #87CEEB 0%, #ffdee9 100%); 
             border: 8px solid #ff85a1; border-radius: 30px; 
             position: relative; margin: 10px 0; overflow: hidden;
@@ -20,22 +20,43 @@
         /* 角色容器：平滑移动和跳跃 */
         #character-container { 
             position: absolute; bottom: 30px; left: 50px; 
-            width: 160px; height: 230px;
             display: flex; flex-direction: column; align-items: center;
             transition: left 0.2s, bottom 0.3s, transform 0.2s;
             user-select: none; z-index: 10;
         }
 
-        /* 可靠精美的头像图层 */
-        #head-img { 
-            width: 140px; height: 140px; 
-            z-index: 2; margin-bottom: -35px; /* 让头和衣服接在一起 */
-            object-fit: contain; /* 确保图片不被拉伸 */
+        /* 生动头像图层：【核心魔法】完美的圆形遮罩和契合度调整 */
+        #head { 
+            width: 130px; height: 130px; 
+            border-radius: 50%; /* 变成完美圆形 */
+            overflow: hidden; /* 裁剪掉方形背景 */
+            border: 4px solid #fff; /* 增加一个精致的白边，像相框一样 */
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            z-index: 11; 
+            margin-bottom: -40px; /* 让头和身体贴合 */
             transition: transform 0.3s;
         }
+        
+        /* 方形图片被裁剪成圆形的实际加载逻辑 */
+        #head-mask {
+            width: 100%; height: 100%;
+            display: flex; justify-content: center; align-items: center;
+            background: #fff;
+        }
 
-        /* 衣服：点击按钮会变 */
-        #outfit { font-size: 110px; line-height: 1; z-index: 1; position: relative; }
+        #head-img { 
+            width: 110%; height: 110%; /* 稍微放大一点点图片，确保填满圆圈 */
+            object-fit: cover; /* 保证图片不拉伸 */
+        }
+
+        /* 衣服：点击按钮会变，现在是一个圆形的 Emoji */
+        #outfit { 
+            font-size: 110px; line-height: 1; z-index: 10; position: relative;
+            background: rgba(255,255,255,0.7); /* 衣服 Emoji 增加一个淡色背景，让它更像《樱花校园》的贴纸风格 */
+            border-radius: 50%; 
+            padding: 5px;
+            box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+        }
 
         /* 食物掉落 */
         #food-air { position: absolute; font-size: 60px; display: none; z-index: 15; text-shadow: 0 0 10px rgba(255,255,255,0.5); }
@@ -62,14 +83,18 @@
 </head>
 <body>
 
-    <h1>🌸 一闪的专属：漂亮双马尾校园公主</h1>
+    <h1>🌸 生动逼真：一闪公主不再贴片！</h1>
     
     <div id="campus-scene">
         <div style="position:absolute; left:15%; top:-50px; animation: fall 6s infinite; font-size: 20px; color: #ffb7c5;">🌸</div>
         <div style="position:absolute; left:80%; top:-50px; animation: fall 8s infinite; font-size: 20px; color: #ffb7c5;">🌸</div>
         
         <div id="character-container">
-            <img id="head-img" src="image_7.png" alt="公主头像">
+            <div id="head">
+                <div id="head-mask">
+                    <img id="head-img" src="image_7.png" alt="公主头像">
+                </div>
+            </div>
             <div id="outfit">👗</div> </div>
 
         <div id="food-air">🍱</div>
@@ -82,7 +107,7 @@
             <button class="move-btn" onclick="move(40)">➡️</button>
         </div>
 
-        <div class="label">👗 选择新校服</div>
+        <div class="label">👗 选择新衣服</div>
         <div class="row">
             <button onclick="changeOutfit('👗')">经典裙</button>
             <button onclick="changeOutfit('👚')">运动服</button>
@@ -103,7 +128,7 @@
         let isJumping = false;
         const container = document.getElementById('character-container');
         const outfit = document.getElementById('outfit');
-        const headImg = document.getElementById('head-img');
+        const head = document.getElementById('head');
 
         // 1. 走路逻辑
         function move(distance) {
@@ -132,7 +157,7 @@
             setTimeout(() => container.style.transform = "scale(1)", 200);
         }
 
-        // 4. 吃饭逻辑：吃饭按钮清晰可见
+        // 4. 吃饭逻辑：吃饭功能回来了！
         function eat(foodEmoji) {
             // 展示食物掉落
             const food = document.getElementById('food-air');
@@ -145,16 +170,16 @@
             // 食物掉到嘴里
             setTimeout(() => {
                 food.style.top = "300px";
-                food.style.transition = "top 0.5s cubic-bezier(0.47, 0, 0.74, 0.71)"; 
+                food.style.transition = "top 0.5s cubic-bezier(0.47, 0, 0.74, 0.71)"; // 模拟物理掉落
             }, 50);
 
             // 公主吃掉食物的反应
             setTimeout(() => {
                 food.style.display = "none";
-                // 头像开心得晃动和歪头
-                headImg.style.transform = "rotate(15deg) scale(1.2)";
+                // 只有漂亮的头像图层开心得晃动和歪头，而不是以前那个圆圆的 Emoji 头像
+                head.style.transform = "rotate(15deg) scale(1.2)";
                 setTimeout(() => {
-                    headImg.style.transform = "rotate(0deg) scale(1)";
+                    head.style.transform = "rotate(0deg) scale(1)";
                 }, 800);
             }, 550);
         }
