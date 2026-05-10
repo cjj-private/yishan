@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>🌟 我的超级灵感空间</title>
+    <style>
+        /* 这里是网页的“衣服”，可以教她改颜色 */
+        body {
+            background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            text-align: center;
+            padding-top: 50px;
+            color: #333;
+        }
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            display: inline-block;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        h1 { color: #ff6b6b; }
+        .video-box {
+            margin: 20px 0;
+            border: 5px solid #ffde59;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+        button {
+            background-color: #4facfe;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        button:hover { transform: scale(1.1); background-color: #00f2fe; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>✨ 欢迎来到我的作品集</h1>
+        <p>这是我用 AI 和代码亲手创建的第一个空间！</p>
+
+        <!-- 视频区域：这里可以换成她喜欢的任何视频链接 -->
+        <div class="video-box">
+            <iframe width="560" height="315" 
+                src="https://www.youtube.com/embed/dQw4w9WgXcQ" 
+                frameborder="0" allowfullscreen>
+            </iframe>
+        </div>
+
+        <br>
+        <button onclick="magicClick()">点我释放魔法！</button>
+    </div>
+
+    <script>
+        // 这里是网页的“大脑”，负责交互
+        function magicClick() {
+            alert("🎉 太棒了！你刚刚运行了你的第一个 JavaScript 函数！");
+            document.body.style.background = "linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%)";
+        }
+    </script>
+</body>
+</html>
