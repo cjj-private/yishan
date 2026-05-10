@@ -2,28 +2,34 @@
 <html lang="zh">
 <head>
     <meta charset="UTF-8">
-    <title>🌸 樱花校园：豪华大餐版</title>
+    <title>🌸 樱花校园：公主变身</title>
     <style>
         body { margin: 0; background: #fff0f6; font-family: 'Arial', sans-serif; display: flex; flex-direction: column; align-items: center; overflow: hidden; }
         
         /* 校园舞台 */
         #campus-scene { 
-            width: 95%; max-width: 600px; height: 400px; 
+            width: 95%; max-width: 600px; height: 450px; 
             background: linear-gradient(180deg, #87CEEB 0%, #ffdee9 100%); 
             border: 8px solid #ff85a1; border-radius: 30px; 
             position: relative; margin: 10px; overflow: hidden;
         }
 
-        /* 角色 */
-        #princess { 
-            font-size: 80px; position: absolute; 
-            bottom: 30px; left: 50px; 
+        /* 角色容器：包含头和身体 */
+        #character-container { 
+            position: absolute; bottom: 30px; left: 50px; 
+            width: 120px; height: 180px;
+            display: flex; flex-direction: column; align-items: center;
             transition: left 0.2s, bottom 0.3s, transform 0.2s;
             user-select: none; z-index: 10;
         }
 
+        /* 头像：保持不变 */
+        #head { font-size: 80px; line-height: 1; z-index: 2; margin-bottom: -20px; }
+        /* 衣服：点击按钮会变 */
+        #outfit { font-size: 100px; line-height: 1; z-index: 1; }
+
         /* 食物掉落 */
-        #food-air { position: absolute; font-size: 50px; display: none; z-index: 5; text-shadow: 0 0 10px rgba(255,255,255,0.5); }
+        #food-air { position: absolute; font-size: 50px; display: none; z-index: 15; }
 
         /* 操作面板 */
         .control-panel { 
@@ -31,114 +37,103 @@
             width: 90%; max-width: 600px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
         .row { display: flex; justify-content: center; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
+        .label { font-size: 14px; color: #ff85a1; font-weight: bold; align-self: center; width: 100%; text-align: center; margin-bottom: 5px; }
         
         button { 
-            padding: 8px 12px; border-radius: 12px; border: 2px solid #ff85a1; 
-            background: #ffdee9; color: #d63384; font-weight: bold; cursor: pointer; font-size: 14px;
+            padding: 10px 15px; border-radius: 15px; border: 2px solid #ff85a1; 
+            background: #ffdee9; color: #d63384; font-weight: bold; cursor: pointer; 
         }
         button:hover { background: #ff85a1; color: white; }
-        .move-btn { background: #00d2ff; border-color: #0099cc; color: white; width: 50px; }
+        .move-btn { background: #00d2ff; border-color: #0099cc; color: white; min-width: 60px; }
         .eat-btn { background: #fff3cd; border-color: #ffc107; color: #856404; }
     </style>
 </head>
 <body>
 
-    <h1>🌸 Yishan 的豪华校园餐厅</h1>
+    <h1>🌸 一闪的樱花变身舞台</h1>
     
     <div id="campus-scene">
-        <div style="position:absolute; left:15%; top:-50px; animation: fall 6s infinite">🌸</div>
-        <div style="position:absolute; left:85%; top:-50px; animation: fall 8s infinite">🌸</div>
+        <div style="position:absolute; left:10%; top:-50px; animation: fall 5s infinite">🌸</div>
+        <div style="position:absolute; left:80%; top:-50px; animation: fall 7s infinite">🌸</div>
         
-        <div id="princess">👸</div>
+        <div id="character-container">
+            <div id="head">👧</div> <div id="outfit">👗</div> </div>
+
         <div id="food-air">🍔</div>
     </div>
 
     <div class="control-panel">
         <div class="row">
             <button class="move-btn" onclick="move(-40)">⬅️</button>
-            <button class="move-btn" onclick="jump()">跳</button>
+            <button class="move-btn" onclick="jump()">跳跃</button>
             <button class="move-btn" onclick="move(40)">➡️</button>
         </div>
 
+        <div class="label">👗 选择新衣服</div>
         <div class="row">
-            <button onclick="change('👸')">初始</button>
-            <button onclick="change('👩‍🎓')">校服</button>
-            <button onclick="change('👗')">礼服</button>
-            <button onclick="change('🐱')">猫耳</button>
+            <button onclick="changeOutfit('👗')">经典裙子</button>
+            <button onclick="changeOutfit('👘')">樱花和服</button>
+            <button onclick="changeOutfit('🥋')">运动校服</button>
+            <button onclick="changeOutfit('🧚‍♀️')">仙女裙</button>
+            <button onclick="changeOutfit('🧥')">帅气风衣</button>
         </div>
 
+        <div class="label">🍔 餐厅菜单</div>
         <div class="row">
-            <span style="font-size:12px; align-self:center;">豪华菜单:</span>
             <button class="eat-btn" onclick="eat('🍔')">汉堡</button>
             <button class="eat-btn" onclick="eat('🍊')">橙汁</button>
             <button class="eat-btn" onclick="eat('🍖')">BBQ</button>
-            <button class="eat-btn" onclick="eat('🍟')">薯条</button>
-            <button class="eat-btn" onclick="eat('🥤')">可乐</button>
+            <button class="eat-btn" onclick="eat('🍰')">蛋糕</button>
         </div>
     </div>
 
     <script>
         let posX = 50;
         let isJumping = false;
-        let currentLook = '👸';
-        const princess = document.getElementById('princess');
+        const container = document.getElementById('character-container');
+        const head = document.getElementById('head');
+        const outfit = document.getElementById('outfit');
 
         function move(distance) {
             posX += distance;
             if (posX < 0) posX = 0;
-            if (posX > 500) posX = 500;
-            princess.style.left = posX + "px";
+            if (posX > 480) posX = 480;
+            container.style.left = posX + "px";
         }
 
         function jump() {
             if (isJumping) return;
             isJumping = true;
-            princess.style.bottom = "180px";
-            setTimeout(() => { princess.style.bottom = "30px"; isJumping = false; }, 300);
+            container.style.bottom = "180px";
+            setTimeout(() => { container.style.bottom = "30px"; isJumping = false; }, 300);
         }
 
-        function change(newLook) {
-            currentLook = newLook;
-            princess.innerText = currentLook;
-            princess.style.transform = "scale(1.3)";
-            setTimeout(() => princess.style.transform = "scale(1)", 200);
+        // 换装核心逻辑：只改变outfit元素的文字
+        function changeOutfit(newClothes) {
+            outfit.innerText = newClothes;
+            // 变身特效：全身抖动一下
+            container.style.transform = "scale(1.2)";
+            setTimeout(() => container.style.transform = "scale(1)", 200);
         }
 
         function eat(foodEmoji) {
             const food = document.getElementById('food-air');
             food.innerText = foodEmoji;
-            food.style.left = (posX + 60) + "px";
+            food.style.left = (posX + 40) + "px";
             food.style.top = "50px";
             food.style.display = "block";
-            food.style.transition = "none";
             
-            // 物理下落动画
             setTimeout(() => {
-                food.style.top = "300px";
-                food.style.transition = "top 0.6s cubic-bezier(0.47, 0, 0.74, 0.71)";
+                food.style.top = "250px";
+                food.style.transition = "top 0.5s ease-in";
             }, 50);
 
-            // 吃到嘴里的反应
             setTimeout(() => {
                 food.style.display = "none";
-                
-                // 根据吃的不同变表情
-                if (foodEmoji === '🍊') {
-                    princess.innerText = "🍹"; // 喝果汁
-                    document.body.style.backgroundColor = "#fff4e6"; // 网页背景微微变橙
-                } else if (foodEmoji === '🍖') {
-                    princess.innerText = "😋"; // 好吃的BBQ
-                    document.getElementById('campus-scene').style.borderColor = "#ff4757"; // 边框变火热
-                } else {
-                    princess.innerText = "👄";
-                }
-
-                setTimeout(() => {
-                    princess.innerText = currentLook;
-                    document.body.style.backgroundColor = "#fff0f6";
-                    document.getElementById('campus-scene').style.borderColor = "#ff85a1";
-                }, 1000);
-            }, 600);
+                food.style.transition = "none";
+                head.innerText = "😋"; // 只有头变表情，衣服不变
+                setTimeout(() => head.innerText = "👧", 1000);
+            }, 550);
         }
 
         // 键盘控制
@@ -152,8 +147,7 @@
     <style>
         @keyframes fall {
             0% { transform: translateY(-50px) rotate(0deg); opacity: 0; }
-            10% { opacity: 1; }
-            100% { transform: translateY(450px) rotate(360deg); opacity: 0; }
+            100% { transform: translateY(500px) rotate(360deg); opacity: 0.7; }
         }
     </style>
 </body>
