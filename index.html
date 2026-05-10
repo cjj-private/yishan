@@ -2,101 +2,152 @@
 <html lang="zh">
 <head>
     <meta charset="UTF-8">
-    <title>🌸 樱花校园：公主动起来了！</title>
+    <title>🌸 樱花校园：全能公主</title>
     <style>
         body { margin: 0; background: #fff0f6; font-family: 'Arial', sans-serif; display: flex; flex-direction: column; align-items: center; overflow: hidden; }
         
         /* 校园舞台 */
         #campus-scene { 
-            width: 95%; max-width: 600px; height: 400px; 
+            width: 95%; max-width: 600px; height: 450px; 
             background: linear-gradient(180deg, #87CEEB 0%, #ffdee9 100%); 
             border: 8px solid #ff85a1; border-radius: 30px; 
             position: relative; margin: 10px; overflow: hidden;
         }
 
-        /* 角色：增加了平滑移动的过渡效果 */
+        /* 角色：平滑移动和跳跃 */
         #princess { 
             font-size: 80px; position: absolute; 
             bottom: 30px; left: 50px; 
-            transition: left 0.2s, bottom 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28); 
-            user-select: none;
+            transition: left 0.2s, bottom 0.3s, transform 0.2s;
+            user-select: none; z-index: 10;
         }
 
-        /* 状态条 */
-        .status-box { position: absolute; top: 15px; left: 15px; background: rgba(255,255,255,0.8); padding: 8px; border-radius: 12px; font-size: 14px; }
-        
-        /* 手机端控制按钮（如果没键盘也能玩） */
-        .move-btns { display: flex; gap: 10px; margin-bottom: 10px; }
-        .ctrl-btn { width: 60px; height: 60px; background: #ff85a1; color: white; border: none; border-radius: 50%; font-size: 24px; cursor: pointer; }
+        /* 食物掉落特效 */
+        #food-air { position: absolute; font-size: 50px; display: none; z-index: 5; }
 
-        .panel { background: white; padding: 10px; border-radius: 20px; width: 90%; display: flex; justify-content: space-around; }
-        button { background: #ffdee9; border: 2px solid #ff85a1; padding: 10px; border-radius: 15px; cursor: pointer; font-weight: bold; }
+        /* 操作面板 */
+        .control-panel { 
+            background: white; padding: 15px; border-radius: 20px; 
+            width: 90%; max-width: 600px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .row { display: flex; justify-content: center; gap: 10px; margin-bottom: 10px; }
+        
+        /* 按钮样式 */
+        button { 
+            padding: 10px 15px; border-radius: 15px; border: 2px solid #ff85a1; 
+            background: #ffdee9; color: #d63384; font-weight: bold; cursor: pointer; 
+        }
+        button:hover { background: #ff85a1; color: white; }
+        .move-btn { background: #00d2ff; border-color: #0099cc; color: white; width: 60px; }
+        .eat-btn { background: #ffc107; border-color: #e67e22; color: white; }
     </style>
 </head>
 <body>
 
-    <h1>🌸 Yishan 的樱花校园</h1>
+    <h1>🌸 樱花校园：变身与开饭！</h1>
     
     <div id="campus-scene">
-        <div class="status-box">坐标: <span id="pos-x">50</span></div>
+        <div style="position:absolute; left:20%; top:10%; animation: fall 5s infinite">🌸</div>
+        <div style="position:absolute; left:70%; top:5%; animation: fall 7s infinite">🌸</div>
+        
         <div id="princess">👸</div>
+        <div id="food-air">🍱</div>
     </div>
 
-    <div class="move-btns">
-        <button class="ctrl-btn" onclick="move(-40)">⬅️</button>
-        <button class="ctrl-btn" onclick="jump()">UP</button>
-        <button class="ctrl-btn" onclick="move(40)">➡️</button>
-    </div>
+    <div class="control-panel">
+        <div class="row">
+            <button class="move-btn" onclick="move(-40)">⬅️</button>
+            <button class="move-btn" onclick="jump()">跳</button>
+            <button class="move-btn" onclick="move(40)">➡️</button>
+        </div>
 
-    <div class="panel">
-        <button onclick="change('👩‍🎓')">换校服</button>
-        <button onclick="eat()">去吃饭 🍱</button>
+        <div class="row">
+            <span style="font-size:12px; align-self:center;">换装:</span>
+            <button onclick="change('👸')">初始</button>
+            <button onclick="change('👩‍🎓')">校服</button>
+            <button onclick="change('👘')">和服</button>
+            <button onclick="change('🧚‍♀️')">仙女</button>
+        </div>
+
+        <div class="row">
+            <span style="font-size:12px; align-self:center;">开饭:</span>
+            <button class="eat-btn" onclick="eat('🍱')">便当</button>
+            <button class="eat-btn" onclick="eat('🍦')">甜筒</button>
+            <button class="eat-btn" onclick="eat('🍰')">蛋糕</button>
+        </div>
     </div>
 
     <script>
         let posX = 50;
+        let isJumping = false;
+        let currentLook = '👸';
         const princess = document.getElementById('princess');
 
-        // 1. 左右移动功能
+        // 1. 走路逻辑
         function move(distance) {
             posX += distance;
-            // 限制范围，不让公主走出校门
             if (posX < 0) posX = 0;
             if (posX > 500) posX = 500;
-            
             princess.style.left = posX + "px";
-            document.getElementById('pos-x').innerText = posX;
-
-            // 走路时晃动一下
-            princess.style.transform = "rotate(" + (distance > 0 ? 10 : -10) + "deg)";
-            setTimeout(() => princess.style.transform = "rotate(0deg)", 200);
         }
 
-        // 2. 跳跃功能
+        // 2. 跳跃逻辑
         function jump() {
-            princess.style.bottom = "150px"; // 跳起来的高度
+            if (isJumping) return;
+            isJumping = true;
+            princess.style.bottom = "180px";
             setTimeout(() => {
-                princess.style.bottom = "30px"; // 落地
+                princess.style.bottom = "30px";
+                isJumping = false;
             }, 300);
         }
 
-        // 3. 换装
-        function change(char) {
-            princess.innerText = char;
+        // 3. 换装逻辑 (直接改变变量和显示)
+        function change(newLook) {
+            currentLook = newLook;
+            princess.innerText = currentLook;
+            // 变身特效
+            princess.style.transform = "scale(1.5)";
+            setTimeout(() => princess.style.transform = "scale(1)", 200);
         }
 
-        // 4. 吃饭
-        function eat() {
-            princess.innerText = "😋";
-            setTimeout(() => princess.innerText = "👩‍🎓", 1000);
+        // 4. 吃饭逻辑
+        function eat(foodEmoji) {
+            // 展示食物掉落
+            const food = document.getElementById('food-air');
+            food.innerText = foodEmoji;
+            food.style.left = (posX + 60) + "px";
+            food.style.top = "100px";
+            food.style.display = "block";
+            
+            // 食物掉到嘴里
+            setTimeout(() => {
+                food.style.top = "300px";
+                food.style.transition = "top 0.5s";
+            }, 10);
+
+            // 公主吃掉食物的反应
+            setTimeout(() => {
+                food.style.display = "none";
+                food.style.transition = "none";
+                princess.innerText = "😋"; // 吃的时候变表情
+                setTimeout(() => princess.innerText = currentLook, 800); // 吃完变回原来的装扮
+            }, 500);
         }
 
-        // 5. 增加键盘控制
+        // 5. 键盘支持
         window.addEventListener('keydown', (e) => {
             if (e.key === "ArrowLeft") move(-30);
             if (e.key === "ArrowRight") move(30);
-            if (e.key === " " || e.key === "ArrowUp") jump();
+            if (e.key === " ") jump();
         });
     </script>
+
+    <style>
+        @keyframes fall {
+            0% { transform: translateY(-50px) rotate(0deg); }
+            100% { transform: translateY(500px) rotate(360deg); }
+        }
+    </style>
 </body>
 </html>
