@@ -53,10 +53,9 @@
                 let s = stars[i];
                 s.y += s.speed;
 
-                ctx.fillStyle = 'white';
-                ctx.beginPath();
-                ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
-                ctx.fill();
+                // 修改后的代码：画一只小兔子
+                ctx.font = s.size * 3 + "px Arial"; 
+                ctx.fillText("🐰", s.x, s.y);
 
                 // 碰撞检测
                 if (s.y + s.size > basket.y && s.x > basket.x && s.x < basket.x + basket.width) {
