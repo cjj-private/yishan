@@ -2,15 +2,15 @@
 <html lang="zh">
 <head>
     <meta charset="UTF-8">
-    <title>🌸 一闪的超萌樱花校园</title>
+    <title>🌸 一闪的专属：超萌樱花校园</title>
     <style>
         body { margin: 0; background: #fff0f6; font-family: 'Arial', sans-serif; display: flex; flex-direction: column; align-items: center; overflow-x: hidden; }
         
         h1 { color: #d63384; margin-top: 10px; font-size: 24px; text-shadow: 1px 1px 2px rgba(255,133,161,0.5); }
 
-        /* 校园舞台：调大了高度，确保按钮都在屏幕里 */
+        /* 校园舞台 */
         #campus-scene { 
-            width: 95%; max-width: 600px; height: 500px; 
+            width: 95%; max-width: 600px; height: 520px; 
             background: linear-gradient(180deg, #87CEEB 0%, #ffdee9 100%); 
             border: 8px solid #ff85a1; border-radius: 30px; 
             position: relative; margin: 10px 0; overflow: hidden;
@@ -20,25 +20,31 @@
         /* 角色容器：平滑移动和跳跃 */
         #character-container { 
             position: absolute; bottom: 30px; left: 50px; 
-            width: 140px; height: 210px;
+            width: 160px; height: 230px;
             display: flex; flex-direction: column; align-items: center;
             transition: left 0.2s, bottom 0.3s, transform 0.2s;
             user-select: none; z-index: 10;
         }
 
-        /* 超级可爱的 Emoji 头像：双马尾+校服女孩 */
-        #head { font-size: 100px; line-height: 1; z-index: 2; margin-bottom: -25px; transition: transform 0.3s; }
+        /* 可靠精美的头像图层 */
+        #head-img { 
+            width: 140px; height: 140px; 
+            z-index: 2; margin-bottom: -35px; /* 让头和衣服接在一起 */
+            object-fit: contain; /* 确保图片不被拉伸 */
+            transition: transform 0.3s;
+        }
+
         /* 衣服：点击按钮会变 */
         #outfit { font-size: 110px; line-height: 1; z-index: 1; position: relative; }
 
         /* 食物掉落 */
         #food-air { position: absolute; font-size: 60px; display: none; z-index: 15; text-shadow: 0 0 10px rgba(255,255,255,0.5); }
 
-        /* 操作面板：清晰整洁 */
+        /* 操作面板 */
         .control-panel { 
             background: white; padding: 15px; border-radius: 20px; 
             width: 90%; max-width: 600px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            margin-bottom: 20px; /* 底部留白 */
+            margin-bottom: 20px;
         }
         .row { display: flex; justify-content: center; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
         .label { font-size: 12px; color: #ff85a1; font-weight: bold; width: 100%; text-align: center; margin-bottom: 5px; }
@@ -56,14 +62,15 @@
 </head>
 <body>
 
-    <h1>🌸 Yishan 的超萌校园游乐场</h1>
+    <h1>🌸 一闪的专属：漂亮双马尾校园公主</h1>
     
     <div id="campus-scene">
         <div style="position:absolute; left:15%; top:-50px; animation: fall 6s infinite; font-size: 20px; color: #ffb7c5;">🌸</div>
         <div style="position:absolute; left:80%; top:-50px; animation: fall 8s infinite; font-size: 20px; color: #ffb7c5;">🌸</div>
         
         <div id="character-container">
-            <div id="head">🧒👧</div> <div id="outfit">👗</div> </div>
+            <img id="head-img" src="image_7.png" alt="公主头像">
+            <div id="outfit">👗</div> </div>
 
         <div id="food-air">🍱</div>
     </div>
@@ -79,11 +86,11 @@
         <div class="row">
             <button onclick="changeOutfit('👗')">经典裙</button>
             <button onclick="changeOutfit('👚')">运动服</button>
-            <button onclick="changeOutfit('👘')">和服</button>
+            <button onclick="changeOutfit('👘')">樱花和服</button>
             <button onclick="changeOutfit('🧚‍♀️')">仙女裙</button>
         </div>
 
-        <div class="label">🍱 食堂菜单</div>
+        <div class="label">🍱 校园食堂</div>
         <div class="row">
             <button class="eat-btn" onclick="eat('🍱')">吃便当</button>
             <button class="eat-btn" onclick="eat('🍦')">吃甜筒</button>
@@ -96,13 +103,13 @@
         let isJumping = false;
         const container = document.getElementById('character-container');
         const outfit = document.getElementById('outfit');
-        const head = document.getElementById('head');
+        const headImg = document.getElementById('head-img');
 
         // 1. 走路逻辑
         function move(distance) {
             posX += distance;
             if (posX < 0) posX = 0;
-            if (posX > 460) posX = 460; // 限制右边边界
+            if (posX > 440) posX = 440; // 限制右边边界
             container.style.left = posX + "px";
         }
 
@@ -117,15 +124,15 @@
             }, 300);
         }
 
-        // 3. 换装逻辑
+        // 3. 换装逻辑：身体变，头不变
         function changeOutfit(newOutfit) {
             outfit.innerText = newOutfit;
-            // 变身特效
+            // 变身特效：整个角色缩放
             container.style.transform = "scale(1.2)";
             setTimeout(() => container.style.transform = "scale(1)", 200);
         }
 
-        // 4. 吃饭逻辑：全功能复活
+        // 4. 吃饭逻辑：吃饭按钮清晰可见
         function eat(foodEmoji) {
             // 展示食物掉落
             const food = document.getElementById('food-air');
@@ -137,18 +144,17 @@
             
             // 食物掉到嘴里
             setTimeout(() => {
-                food.style.top = "280px";
-                food.style.transition = "top 0.5s cubic-bezier(0.47, 0, 0.74, 0.71)"; // 模拟物理掉落
+                food.style.top = "300px";
+                food.style.transition = "top 0.5s cubic-bezier(0.47, 0, 0.74, 0.71)"; 
             }, 50);
 
             // 公主吃掉食物的反应
             setTimeout(() => {
                 food.style.display = "none";
-                head.innerText = "😋"; // 吃的时候变表情
-                head.style.transform = "scale(1.3) rotate(15deg)"; // 头像开心得晃动
+                // 头像开心得晃动和歪头
+                headImg.style.transform = "rotate(15deg) scale(1.2)";
                 setTimeout(() => {
-                    head.innerText = "🧒👧"; // 恢复表情
-                    head.style.transform = "scale(1) rotate(0deg)";
+                    headImg.style.transform = "rotate(0deg) scale(1)";
                 }, 800);
             }, 550);
         }
@@ -164,7 +170,7 @@
     <style>
         @keyframes fall {
             0% { transform: translateY(-50px) rotate(0deg); opacity: 0; }
-            100% { transform: translateY(550px) rotate(360deg); opacity: 0.6; }
+            100% { transform: translateY(570px) rotate(360deg); opacity: 0.6; }
         }
     </style>
 </body>
